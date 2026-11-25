@@ -1,11 +1,8 @@
 # Relationship between Movie Review Complexity and Polarization
 
-**DS 4002 Project 1, The Pink Tigers**
-Camila Janada (group leader), Arya Rajesh, Shawn Chen, Zichen Luo
-
 **Research question:** Is a more complex movie review associated with a more polarizing review?
 
-We fit a multiple linear regression to test whether review length (word count) and readability (Flesch-Kincaid grade level) are associated with review polarization, controlling for top-critic status. Polarization is how far a review's normalized score (0–1) falls from the midpoint of 0.5.
+Fit a multiple linear regression to test whether review length (word count) and readability (Flesch-Kincaid grade level) are associated with review polarization, controlling for top-critic status. Polarization is how far a review's normalized score (0–1) falls from the midpoint of 0.5.
 
 ---
 
@@ -15,7 +12,6 @@ We fit a multiple linear regression to test whether review length (word count) a
 |---|---|
 | `ds_4002_project_1.ipynb` | Main analysis notebook: feature creation, exploratory analysis, regression model and model testing |
 | `rotten_tomatoes_data_with_vars.csv.zip` | Cleaned dataset (zipped): 120,622 Rotten Tomatoes critic reviews from 2021-01-01 onward |
-| `clean_data.py` | Script that rebuilds the cleaned dataset from the raw Kaggle file |
 | `README.md` | This file |
 
 The data is zipped because the unzipped CSV (about 47 MB) is over GitHub's 25 MB browser upload limit.
@@ -26,12 +22,6 @@ The data is zipped because the unzipped CSV (about 47 MB) is over GitHub's 25 MB
 
 **Source:** [Massive Rotten Tomatoes Movies & Reviews](https://www.kaggle.com/datasets/andrezaza/clapper-massive-rotten-tomatoes-movies-and-reviews) by andrezaza on Kaggle, scraped from Rotten Tomatoes in April 2023.
 **License:** CC0: Public Domain.
-
-**Cleaning steps** (`clean_data.py`):
-1. Keep reviews published on or after January 1, 2021 (post-Covid scope).
-2. Drop reviews with no review text or no original score.
-3. Remove duplicate review IDs.
-4. Convert every original score (fractions such as 3/5, letter grades, star ratings, "3 out of 4") to a common 0–100 `standardizedScore`. Scores that cannot be read, or that are larger than their own scale, are dropped.
 
 ---
 
@@ -49,33 +39,16 @@ Uses the cleaned data already in this repo.
 
 The notebook installs `textstat` itself. Everything else it uses (pandas, numpy, matplotlib, seaborn, statsmodels, scikit-learn) comes with Colab.
 
-### Option B: Rebuild the cleaned data from the raw Kaggle file
-
-Use this to reproduce the data cleaning from scratch.
-
-1. Download the dataset from the Kaggle link above and unzip it. Only `rotten_tomatoes_movie_reviews.csv` is needed.
-2. Run the cleaning script (Python 3 with pandas):
-   ```bash
-   python clean_data.py rotten_tomatoes_movie_reviews.csv
-   ```
-   In Colab, upload both files and run `!python clean_data.py rotten_tomatoes_movie_reviews.csv` in a cell.
-3. The script prints how many reviews each step removed and writes `rotten_tomatoes_data_cleaned.csv`.
-4. Follow Option A, uploading `rotten_tomatoes_data_cleaned.csv` in step 4 instead of the zip. The notebook accepts either a `.csv` or a `.csv.zip`.
-
-Optional flags: `-o` sets a different output file name, and `--start-date` changes the earliest review date kept (default `2021-01-01`).
-
----
-
 ## Notebook structure
 
-| Section | Owner | What it does |
-|---|---|---|
-| 1. Load the cleaned data | Shawn | Uploads and reads the zipped dataset |
-| 2. Create the model variables | Arya | Builds `normalized_score`, `polarization`, `word_count` and `grade_level` |
-| 3. Exploratory data analysis | Arya | Summary statistics and distribution plots; saves the data with the new variables |
-| 4. Model development | Zichen | 80/20 train/test split, multiple linear regression with HC3 robust standard errors, assumption checks |
-| 5. Model testing | Camila | Applies the model to the held-out 20%, compares it with a training-mean baseline and checks the plan's success criteria |
-| 6. Export all outputs | — | Saves every table and graph into `OUTPUT.zip` |
+| Section | What it does |
+|---|---|
+| 1. Load the cleaned data | Uploads and reads the zipped dataset |
+| 2. Create the model variables | Builds `normalized_score`, `polarization`, `word_count` and `grade_level` |
+| 3. Exploratory data analysis | Summary statistics and distribution plots; saves the data with the new variables |
+| 4. Model development | 80/20 train/test split, multiple linear regression with HC3 robust standard errors, assumption checks |
+| 5. Model testing | Applies the model to the held-out 20%, compares it with a training-mean baseline and checks the plan's success criteria |
+| 6. Export all outputs | Saves every table and graph into `OUTPUT.zip` |
 
 **Model:**
 `polarization = b0 + b1·log(1 + word_count) + b2·grade_level + b3·is_top_critic`
